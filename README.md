@@ -4,7 +4,7 @@ Libing-header-file
 Libingのjavascript-Objc連携に必要なヘッダー情報
 
 LibingではJavaScriptの関数Libing_UIWebView();を利用することで、UIWebViewの関数を利用することができます。
-selfでJavaScriptを実行しているUIWebViewその他JavaScriptで宣言された変数などを引数に与えたりすることができます。
+selfでJavaScriptを実行しているUIWebViewその他JavaScriptで宣言された変数などを引数に与えることができます。
 
 例)
 javascript:alert(Libing_UIWebView('[self delegate]'));
