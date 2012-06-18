@@ -20,7 +20,7 @@ javascript:var d=Libing_UIWebView('[self delegate]');alert(Libing_UIWebView('[d 
 tabArrayはその名の通りタブ列で、現在開かれているタブのインスタンスが含まれています。
 Hide adsアドオンがあれば、self以外の関数も呼ぶことが可能になります。
 また、この結果から解る通りNSArrayとArray()の相互変換も可能となっています。
-或いは、以下のように命令しても、同じ結果を得ることもできます。
+或いは、以下のように命令しても、同じ結果を得ることができます。
 
 例)
 javascript:alert(Libing_UIWebView('[[self delegate] tabArray]'));
