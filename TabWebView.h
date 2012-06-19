@@ -1,5 +1,8 @@
 @interface TabWebView : UIView <CustomWebViewDelegate, SwitchScrollViewDelegate, UIGestureRecognizerDelegate, UIActionSheetDelegate, NSURLConnectionDelegate, NSURLConnectionDataDelegate>
 // CustomWebViewのdelegateに指定されています。これらのメソッドを使用する場合、Hide Adsアドオンが必要になります。
+// v1.9でBrowserViewControllerと統合されます。
+// BrowserViewControllerへのアクセスにviewControllerプロパティを介する必要が無くなるだけで、
+// デリゲートのメソッドを弄る分には問題が出ることはありません。
 
 @property (strong, nonatomic) BrowserViewController *viewController;
 @property (strong, nonatomic) SwitchScrollView *switchView;
@@ -22,6 +25,7 @@
 - (void)insertTab:(NSURLRequest *)req; // 現在開いているタブの次に、reqのリクエスト内容でタブを開きます。
 - (void)download:(NSURLRequest *)req; // reqのリクエスト内容をダウンロードします。
 - (NSArray *)tabArray; // タブ配列です。直接操作することは出来ません。他のタブへアクセスするのに使用します。
+- (CustomWebView *)webView; // 現在開いているタブです。[self description]からアクセスした方が速い。
 
 - (NSURLRequest *)requestWithString:(NSString *)urlString withReferer:(CustomWebView *)webView
 // urlStringのURLへのリクエストを生成します。webViewに指定したタブをリファラーとして扱います。
@@ -31,6 +35,5 @@
 
 - (void)callATOKPad; // ATOKPadを呼び出します。フォーカスが存在しなければ返り値はクリップボードへ。
 - (UIImage *)getImage:(NSUInteger)index; // タブ一覧で表示する画像を取得するためのメソッド。無限ループでメモリ解放ツール化。
-
 
 @end
