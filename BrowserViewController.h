@@ -38,6 +38,7 @@
 
 - (void)installBookmarklet:(NSString *)code withName:(NSString *)name withCmds:(NSArray *)cmds; // ブックマークレットのインストール画面を開く。
 - (void)addBookmark:(NSString *)item withName:(NSString *)name; // ブックマークの追加画面を開く。
+- (void)makeMail:(NSURL *)url; // メール作成画面を開く。
 
 
 @end
