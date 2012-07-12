@@ -13,15 +13,14 @@ Show statusbar       ShowStatusBar     ★ステータスバーの表示
 Progress circle      ProgressCircle    ★プログレスサークルを表示。毒キノコ。
 First menu           FirstMenu         メニューのモーダルに表示するタブ。
 Limit of tabs        TabsLimit         ★タブの上限。限界突破も下限値1も設定可能だが保証はしない。
-Determination of borders               以下の3つ。
-Left                 BorderLeft
-Right                BorderRight
-Bottom               BorderBottom
 Reorder menu buttons ShakeMenuButtons  振って出てくるメニューのボタン列。NSArray。
 
 Scroll options
 Inertial scroll      InertialScroll    ★慣性スクロール。
-CustomScroller                         以下の5つ。
+Determination of borders               以下の3つ。
+Left                 BorderLeft
+Right                BorderRight
+Bottom               BorderBottom
 Opposite direction   OppositeDirection ★反転に必要な角度。   
 Scroll speed         ScrollSpeed       5倍でも10倍でも設定可能。だが(ry
 Screen left          NormalLeft        YESでノーマルなスクローラー。
@@ -32,6 +31,8 @@ Download options
 All media download   MediaDownload     text以外のレスポンスであれば強制的にダウンロード。
 Auto modal preview   AutoModal         ダウンロード完了後、自動的にプレビューを表示。
 Dismiss and delete   DismissDelete     プレビューのDoneボタンを押すと同時にファイルを削除。
+Use recent data      RecentData        ★直前のコネクションで得られたデータを利用。
+Accelerate image     AccelerateImage   ★画像のロード時に、幾つまで同時にカスタムプロトコルを利用するか。
 
 Extension
 Monitor clipboard    MonitorClipBoard  クリップボード監視。
