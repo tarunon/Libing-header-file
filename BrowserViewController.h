@@ -1,4 +1,4 @@
-@interface BrowserViewController : UIViewController <CustomWebViewDelegate, SwitchScrollViewDelegate, UIGestureRecognizerDelegate, UIActionSheetDelegate, DownloadContentDelegate> 
+@interface BrowserViewController : UIViewController <CustomWebViewDelegate, SwitchScrollViewDelegate, UIGestureRecognizerDelegate, UIActionSheetDelegate, DownloadContentDelegate> {
 // CustomWebViewのdelegateに指定されています。これらのメソッドを使用する場合、Hide Adsアドオンが必要になります。
 
 @property (strong, nonatomic) Bookmark *bookmark, *history;
@@ -8,13 +8,7 @@
 @property (strong, nonatomic) SwitchScrollView *switchView;
 @property (strong, nonatomic) AddressBar *addressBar;
 @property (strong, nonatomic) SearchBar *searchBar;
-// インターフェースにアクセス可能。希望があれば、それぞれのヘッダーを可能な範囲で公開します。
-
-@property (strong, nonatomic) NSMutableArray *blockHosts, *blockDomain; 
-// アドブロック用の配列。hostsがホスト指定、domainが*以降のサブドメイン指定。
-    
-@property (nonatomic) BOOL isPrivate;
-// プライベートブラウジングのフラグ。true→履歴クッキー記録しない。
+// インターフェースにアクセスできます。希望があれば、それぞれのヘッダーを可能な範囲で公開します。
 
 @property (strong, nonatomic) NSUserDefaults *defaults; 
 // ユーザーデフォルトです。設定の値を直接書き換えることが可能。UserDefaultValues参照。
