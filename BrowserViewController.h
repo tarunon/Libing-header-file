@@ -1,23 +1,28 @@
 @interface BrowserViewController : UIViewController <CustomWebViewDelegate, SwitchScrollViewDelegate, UIGestureRecognizerDelegate, UIActionSheetDelegate, DownloadContentDelegate> 
 // CustomWebViewのdelegateに指定されています。これらのメソッドを使用する場合、Hide Adsアドオンが必要になります。
 
-@property (strong, nonatomic) Bookmark *bookmark, *history;
-@property (strong, nonatomic) Bookmarklet *bookmarklet;
-@property (strong, nonatomic) UITabBarController *menuBar;
-@property (strong, nonatomic) DownloadManager *download;
-@property (strong, nonatomic) SwitchScrollView *switchView;
-@property (strong, nonatomic) AddressBar *addressBar;
-@property (strong, nonatomic) SearchBar *searchBar;
+
+@property (nonatomic) BrowserAppDelegate *appDelegate;
+@property (nonatomic) BookmarkRoot *bookmark, *history;
+@property (nonatomic) Bookmarklet *bookmarklet;
+@property (nonatomic) UITabBarController *menuBar;
+@property (nonatomic) DownloadManager *download;
+@property (nonatomic) SwitchScrollView *switchView;
+@property (nonatomic) AddressBar *addressBar;
+@property (nonatomic) SearchBar *searchBar;
 // インターフェースにアクセス可能。希望があれば、それぞれのヘッダーを可能な範囲で公開します。
 
-@property (strong, nonatomic) NSMutableArray *blockHosts, *blockDomain; 
+@property (nonatomic) NSMutableArray *blockHosts, *blockDomain;
 // アドブロック用の配列。hostsがホスト指定、domainが*以降のサブドメイン指定。
     
 @property (nonatomic) BOOL isPrivate;
 // プライベートブラウジングのフラグ。true→履歴クッキー記録しない。
 
-@property (strong, nonatomic) NSUserDefaults *defaults; 
+@property (nonatomic) NSUserDefaults *defaults; 
 // ユーザーデフォルトです。設定の値を直接書き換えることが可能。UserDefaultValues参照。
+
+@property (nonatomic) UIPasteboard *pasteboard;
+// クリップボード。
 
 - (void)setValue:(id)value forKey:(NSString *)key
 - (id)valueForKey:(NSString *)key
@@ -40,7 +45,7 @@
 // 上記二つに加え、NSArray,NSString,NSURL以外のインスタンスは意図して生成することは出来ない。
 
 - (void)callATOKPad; // ATOKPadを呼び出す。フォーカスが存在しなければ返り値はクリップボードへ。
-- (UIImage *)getImage:(NSUInteger)index; // タブ一覧で表示する画像を取得するためのメソッド。無限ループでメモリ解放ツール化。
+- (UIImage *)getImage:(NSUInteger)index; // タブ一覧で表示する画像を取得するためのメソッド。無限ループしても意味なくなった＼(^o^)／
 
 - (void)installBookmarklet:(NSString *)code withName:(NSString *)name withCmds:(NSArray *)cmds; // ブックマークレットのインストール画面を開く。
 - (void)addBookmark:(NSString *)item withName:(NSString *)name; // ブックマークの追加画面を開く。
