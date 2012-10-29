@@ -11,8 +11,23 @@
 @property (nonatomic) NSMutableArray *rotatingSheetButtons;
 // 長押しした時のボタンに表示する文字列。ブックマークレットのタイトル打ち込みゃ動く。
 
+@property (nonatomic) NSMutableArray *backURLs, *forwardURLs;
+// タブ履歴。backURLsの先頭が現在のページ。だいたいあってる。
+
+@property (nonatomic) NSString *location;
+// デコード済みURL。アドレスバーに表示される。
+// UIWebViewのrequestか、JSのlocation.hrefを参照する。
+
+- (void)addRotatingSheetButtonWithTitle:(NSString *)title;
+// rotatingSheetButtonsに指定したタイトルを追加する。
+// ぶっちゃけ直に置き換えてもいい。
+
 - (void)transferLoading;
 // 読み込みを転送する。Libingではダウンロードに。読込中でなければ動かない。
+
+- (void)restore;
+// backURLsとforwardURLsにURLを入れた後、このメソッドでタブを再生する。
+// ただしタブが新品で無い場合の動作は保証しない。
 
 // 他はUIWebViewに殆ど同じ。SmoothScroll然りプライベートメソッドもゴニョれるので、これだけでも結構遊べたり。
 
