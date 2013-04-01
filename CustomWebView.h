@@ -23,7 +23,7 @@
 
 @property (weak, nonatomic, readonly) id webView;
 // WebViewにアクセスする(UIWebViewではない)。WebViewはコアな部分なので、何か出来るかも。
-// wktk
+// と思ったけど出力がうまくいってなくて使えなかった。パースすればいける…かな…?
 
 - (void)addRotatingSheetButtonWithTitle:(NSString *)title;
 // rotatingSheetButtonsに指定したタイトルを追加する。
