@@ -13,6 +13,9 @@
 @property (nonatomic) float decelerationRate;
 // 慣性スクロールとかなんとか、ここ変えると内蔵するUIScrollView全部切り替わる。
 
+@property (nonatomic) BOOL listMode;
+// リストモード。iPad版のタブ一覧。実はiPhone版でも動く。
+
 - (void)openView:(UIView *)view animated:(BOOL)animated;
 - (void)openViewWithIndex:(NSInteger)index animated:(BOOL)animated;
 // 指定したViewを開く。
@@ -26,7 +29,7 @@
 
 - (NSInteger) prev;
 - (NSInteger) next;
-// 前後。
+// 前後のインデックス。
 
 @end
 

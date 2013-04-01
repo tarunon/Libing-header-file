@@ -18,6 +18,13 @@
 // デコード済みURL。アドレスバーに表示される。
 // UIWebViewのrequestか、JSのlocation.hrefを参照する。
 
+@property (nonatomic) PreviewInWebView *preview;
+// Preview関連クラス。
+
+@property (weak, nonatomic, readonly) id webView;
+// WebViewにアクセスする(UIWebViewではない)。WebViewはコアな部分なので、何か出来るかも。
+// wktk
+
 - (void)addRotatingSheetButtonWithTitle:(NSString *)title;
 // rotatingSheetButtonsに指定したタイトルを追加する。
 // ぶっちゃけ直に置き換えてもいい。
@@ -31,6 +38,9 @@
 
 // 他はUIWebViewに殆ど同じ。SmoothScroll然りプライベートメソッドもゴニョれるので、これだけでも結構遊べたり。
 
+- (void)close
+// タブを閉じる。
+
 @end
 
 //デリゲートメソッド。使うかなぁ？
@@ -42,15 +52,20 @@
 - (void)customWebViewDidFinishLoad:(CustomWebView *)customWebView;
 - (void)customWebView:(CustomWebView *)customWebView didFailLoadWithError:(NSError *)error;
 // UIWebViewDelegateのラッパー。呼び出すタイミングとか、navigationTypeとかをちょっと弄ったり。
+- (BOOL)customWebView:(CustomWebView *)customWebView shouldStartRenderingConnectionClosed:(BOOL)closed;
+// レンダリングを開始するかどうか。Connectionが閉じられていれば、closed=YES
+
+- (CustomWebView *)customWebView:(CustomWebView *)customWebView createWindowWithRequest:(NSURLRequest *)request;
+// 新しいタブを開く。だいぶ上手く動くようになった(｀・ω・´)
+
+- (void)customWebViewClose:(CustomWebView *)customWebView;
+// タブを閉じる。
+
 - (void)customWebView:(CustomWebView *)customWebView didAjaxTransitionWithAjaxType:(CustomWebViewAjaxType)ajaxType;
 // Ajax関連の通信完了とかの通知。戻る進む、リンククリック。
 
-- (void)customWebView:(CustomWebView *)customWebView didReceiveDataLength:(float)dataLength;
-- (void)customWebView:(CustomWebView *)customWebView didReceiveExpectedContentLength:(float)expectedContentLength;
-// 受け取ったレスポンスの長さ、データの長さ。プログレスサークルで使う。
-
-- (CustomWebView *)customWebView:(CustomWebView *)customWebView createWindowWithRequest:(NSURLRequest *)request;
-// 新しいタブを開く。ひじょーに残念だが根っこがリジェクトされてるので使われていない。
+- (void)customWebView:(CustomWebView *)customWebView progressEstimateChanged:(float)progress;
+// プログレスサークルで使う。
 
 - (id<NSURLConnectionDelegate, NSURLConnectionDataDelegate>)customWebView:(CustomWebView *)customWebView requiredNewConnectionDelegate:(NSURLConnection *)connection;
 // 通信の転送要請が来た場合に新しいNSURLConnectionDelegateを返す。ダウンロードクラスを作って返してる。
@@ -58,17 +73,18 @@
 - (NSURLCredential *)customWebView:(CustomWebView *)customWebView requiredCredentialWithAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
 // ベーシック認証
 
-- (BOOL)customWebView:(CustomWebView *)customWebView shouldShowRotatingSheet:(UIActionSheet *)rotatingSheet;
-- (void)customWebView:(CustomWebView *)customWebView rotatingSheet:(UIActionSheet *)rotatingSheet clickedButtonAtIndex:(NSInteger)buttonIndex;
-- (void)customWebView:(CustomWebView *)customWebView rotatingSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex;
-- (void)customWebView:(CustomWebView *)customWebView rotatingSheet:(UIActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex;
-- (void)customWebView:(CustomWebView *)customWebView rotatingSheetCancel:(UIActionSheet *)actionSheet;
-// 長押しボタンのアレコレ
+- (NSString *)customWebView:(CustomWebView *)customWebView shouldShowPrompt:(NSString *)prompt defaultText:(NSString *)text;
+// prompt()の乗っ取り。今は使ってないと思う。
 
 - (NSHTTPURLResponse *)customWebView:(CustomWebView *)customWebView shouldReceiveResponse:(NSHTTPURLResponse *)response;
 - (NSMutableURLRequest *)customWebView:(CustomWebView *)customWebView shouldSendRequest:(NSMutableURLRequest *)request;
 // リクエスト、レスポンス換装用。UAとか文字コードとかは内部的にやってるので、こっちは広告ブロックとかメディアダウンロードとかに使う。
 
-// 晒しといてなんだけど絶対使わない、使えない。
+- (BOOL)customWebView:(CustomWebView *)customWebView shouldShowRotatingSheet:(UIActionSheet *)rotatingSheet;
+- (void)customWebView:(CustomWebView *)customWebView rotatingSheet:(UIActionSheet *)rotatingSheet clickedButtonAtIndex:(NSInteger)buttonIndex;
+- (void)customWebView:(CustomWebView *)customWebView rotatingSheetCancel:(UIActionSheet *)actionSheet;
+// 長押しボタンのアレコレ
+
+// 晒しといてなんだけど、デリゲートは絶対使わない、使えない。
 
 @end

@@ -5,18 +5,23 @@
 @property (nonatomic) BrowserAppDelegate *appDelegate;
 @property (nonatomic) BookmarkRoot *bookmark, *history;
 @property (nonatomic) Bookmarklet *bookmarklet;
-@property (nonatomic) UITabBarController *menuBar;
+@property (nonatomic) UITabBarController *menuBar; // iPhone only
+@property (nonatomic) UIPopoverController *popover; // iPad only
 @property (nonatomic) DownloadManager *download;
 @property (nonatomic) SwitchScrollView *switchView;
 @property (nonatomic) AddressBar *addressBar;
 @property (nonatomic) SearchBar *searchBar;
 // インターフェースにアクセス可能。希望があれば、それぞれのヘッダーを可能な範囲で公開します。
 
+
+@property (nonatomic, readonly) NSArray *tabArray;
+// タブ配列。readonly。他のタブへアクセスするのに使用する。
+
+@property (nonatomic, readonly) CustomWebView *webView;
+// 現在開いているタブ。[self description]からアクセスした方が速い。
+
 @property (nonatomic) NSMutableArray *blockHosts, *blockDomain;
 // アドブロック用の配列。hostsがホスト指定、domainが*以降のサブドメイン指定。
-    
-@property (nonatomic) BOOL isPrivate;
-// プライベートブラウジングのフラグ。true→履歴クッキー記録しない。
 
 @property (nonatomic) NSUserDefaults *defaults; 
 // ユーザーデフォルトです。設定の値を直接書き換えることが可能。UserDefaultValues参照。
@@ -35,8 +40,6 @@
 - (void)addEmptyTab; // タブ配列の最後に空タブを追加。
 - (void)insertTab:(NSURLRequest *)req; // 現在開いているタブの次に、reqのリクエスト内容でタブを開く。
 - (void)download:(NSURLRequest *)req; // reqのリクエスト内容をダウンロードする。
-- (NSArray *)tabArray; // タブ配列。readonly。他のタブへアクセスするのに使用する。
-- (CustomWebView *)webView; // 現在開いているタブ。[self description]からアクセスした方が速い。
 
 - (NSURLRequest *)requestWithString:(NSString *)urlString withReferer:(CustomWebView *)webView
 // urlStringのURLへのリクエストを生成する。webViewに指定したタブをリファラーとして扱う。
@@ -45,11 +48,22 @@
 // 上記二つに加え、NSArray,NSString,NSURL以外のインスタンスは意図して生成することは出来ない。
 
 - (void)callATOKPad; // ATOKPadを呼び出す。フォーカスが存在しなければ返り値はクリップボードへ。
-- (UIImage *)getImage:(NSUInteger)index; // タブ一覧で表示する画像を取得するためのメソッド。無限ループしても意味なくなった＼(^o^)／
 
-- (void)installBookmarklet:(NSString *)code withName:(NSString *)name withCmds:(NSArray *)cmds; // ブックマークレットのインストール画面を開く。
-- (void)addBookmark:(NSString *)item withName:(NSString *)name; // ブックマークの追加画面を開く。
-- (void)makeMail:(NSURL *)url; // メール作成画面を開く。
+- (void)evalBookmark:(id<Bookmark>)bookmark webView:(CustomWebView *)webView;
+// ブックマークの実行。
+
+- (void)makeMail:(NSURL *)url;
+// メール作成画面を開く。mailto:に同じ。
+
+- (void)installBookmark:(id<Bookmark>)bookmark withCmds:(NSArray *)cmds;
+// ブックマークを追加する。
+
+- (void)doJavaScript:(NSString *)code arguments:(NSArray *)args webView:(CustomWebView *)webView;
+// JavaScriptの実行。Libing.UIWebViewを必要に応じて実装する。
+
+- (void)evalBookmarkWithCmd:(NSString *)cmd webView:(CustomWebView *)webView;
+// cmdに指定したショートカットを持つブックマークレットを全て実行する。
+
 
 
 @end
