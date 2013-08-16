@@ -21,10 +21,6 @@
 @property (nonatomic) PreviewInWebView *preview;
 // Preview関連クラス。
 
-@property (weak, nonatomic, readonly) id webView;
-// WebViewにアクセスする(UIWebViewではない)。WebViewはコアな部分なので、何か出来るかも。
-// と思ったけど出力がうまくいってなくて使えなかった。パースすればいける…かな…?
-
 - (void)addRotatingSheetButtonWithTitle:(NSString *)title;
 // rotatingSheetButtonsに指定したタイトルを追加する。
 // ぶっちゃけ直に置き換えてもいい。
