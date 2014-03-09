@@ -3,9 +3,8 @@
 @property (nonatomic) BookmarkRoot *bookmark, *history;
 // ブックマークと履歴。
 
-@property (nonatomic) NSMutableArray *blockHosts, *blockDomain;
-// アドブロック用の配列。
-// blockDomainが*を含む。
+@property BrowserPreferences *preferences;
+// 設定。UserDefaultsを書き換えるよりもこれを用いたほうが確実。
 
 @property (nonatomic) NSMutableSet *loadedOtherHosts, *blockedHosts;
 // 最も最近読み込んだホストと、ブロックしたホストの配列。

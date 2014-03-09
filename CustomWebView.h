@@ -1,3 +1,5 @@
+#import <Foundation/Foundation.h>
+
 @protocol CustomWebViewDelegate;
 @interface CustomWebView : UIWebView
 
@@ -11,8 +13,14 @@
 @property (nonatomic) NSMutableArray *rotatingSheetButtons;
 // 長押しした時のボタンに表示する文字列。ブックマークレットのタイトル打ち込みゃ動く。
 
+@property (nonatomic) NSArray *selectMenuItems;
+// Select Menuに追加するボタンのタイトル。上に同じ。
+
 @property (nonatomic) NSMutableArray *backURLs, *forwardURLs;
 // タブ履歴。backURLsの先頭が現在のページ。だいたいあってる。
+
+@property (nonatomic) NSDictionary *historyInfo;
+// タブ履歴のより詳細な情報。スクロール位置等が含まれる？
 
 @property (nonatomic) NSString *location;
 // デコード済みURL。アドレスバーに表示される。
@@ -57,6 +65,9 @@
 - (void)customWebViewClose:(CustomWebView *)customWebView;
 // タブを閉じる。
 
+- (void)customWebView:(CustomWebView *)customWebView didIframeTransitionWithLoadType:(CustomWebViewLoadType)loadType;
+// IFRAME関連の読み込み完了時。戻る進む、リンククリック。
+
 - (void)customWebView:(CustomWebView *)customWebView didAjaxTransitionWithAjaxType:(CustomWebViewAjaxType)ajaxType;
 // Ajax関連の通信完了とかの通知。戻る進む、リンククリック。
 
@@ -70,7 +81,7 @@
 // ベーシック認証
 
 - (NSString *)customWebView:(CustomWebView *)customWebView shouldShowPrompt:(NSString *)prompt defaultText:(NSString *)text;
-// prompt()の乗っ取り。今は使ってないと思う。
+// prompt()の乗っ取り。
 
 - (NSHTTPURLResponse *)customWebView:(CustomWebView *)customWebView shouldReceiveResponse:(NSHTTPURLResponse *)response;
 - (NSMutableURLRequest *)customWebView:(CustomWebView *)customWebView shouldSendRequest:(NSMutableURLRequest *)request;
@@ -80,6 +91,13 @@
 - (void)customWebView:(CustomWebView *)customWebView rotatingSheet:(UIActionSheet *)rotatingSheet clickedButtonAtIndex:(NSInteger)buttonIndex;
 - (void)customWebView:(CustomWebView *)customWebView rotatingSheetCancel:(UIActionSheet *)actionSheet;
 // 長押しボタンのアレコレ
+
+- (void)customWebView:(CustomWebView *)customWebView didShowKeyBoard:(UIView *)inputView withAccessoryView:(UIView *)accessoryView;
+// 表示されたキーボードについて。
+
+- (BOOL)customWebView:(CustomWebView *)customWebView canPerformSelectMenuAction:(SEL)action withSender:(id)sender;
+- (void)customWebView:(CustomWebView *)customWebView performSelectMenuTitle:(NSString *)title;
+// Select Menu周り。
 
 // 晒しといてなんだけど、デリゲートは絶対使わない、使えない。
 

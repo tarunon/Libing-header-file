@@ -1,4 +1,6 @@
-@interface BrowserViewController : UIViewController <CustomWebViewDelegate, SwitchScrollViewDelegate, UIGestureRecognizerDelegate, UIActionSheetDelegate, DownloadContentDelegate> 
+#import <Foundation/Foundation.h>
+
+@interface BrowserViewController : UIViewController <CustomWebViewDelegate, SwitchScrollViewDelegate, UIGestureRecognizerDelegate, UIActionSheetDelegate, DownloadContentDelegate>
 // CustomWebViewのdelegateに指定されています。これらのメソッドを使用する場合、Hide Adsアドオンが必要になります。
 
 @property (nonatomic) BrowserApplication *application;
@@ -31,7 +33,7 @@
 // callbackやATOK連携時のクリップボードの待避等、一部の環境変数はここに含まれる。
 
 - (void)addEmptyTab; // タブ配列の最後に空タブを追加。
-- (void)insertTab:(NSURLRequest *)req; // 現在開いているタブの次に、reqのリクエスト内容でタブを開く。
+- (NSInteger)insertTab:(NSURLRequest *)req; // 現在開いているタブの次に、reqのリクエスト内容でタブを開く。返り値はタブのインデックス。
 - (void)download:(NSURLRequest *)req; // reqのリクエスト内容をダウンロードする。
 
 - (NSURLRequest *)requestWithString:(NSString *)urlString withReferer:(CustomWebView *)webView
@@ -51,8 +53,13 @@
 - (void)installBookmark:(id<Bookmark>)bookmark withCmds:(NSArray *)cmds; // ブックマークのインストール画面を開く。
 // bookmarkは、履歴あたりを参照すると良さ気(履歴もブックマークと同様のインスタンスである)。
 
-- (void)doJavaScript:(NSString *)code arguments:(NSArray *)args webView:(CustomWebView *)webView;
-// JavaScriptの実行。Libing.UIWebViewを必要に応じて実装する。
+- (void)doJavaScript:(NSString *)code waitUntilDone:(BOOL)wait arguments:(NSArray *)args webView:(CustomWebView *)webView;
+// JavaScriptの実行。waitは基本的にNOでOK。Libing.UIWebViewを必要に応じて実装する。
+// argsはStringのみ。
+
+- (void)doJavaScript:(NSString *)code argumentEvalObject:(NSString *)arg waitUntilDone:(BOOL)wait webView:(CustomWebView *)webView;
+// JavaScriptの実行。waitは基本的にNOでOK。Libing.UIWebViewを必要に応じて実装する。
+// グローバルな変数や、JSONを引数に与える事が可能。
 
 - (void)evalBookmarkWithCmd:(NSString *)cmd webView:(CustomWebView *)webView;
 // cmdに指定したショートカットを持つブックマークレットを全て実行する。
