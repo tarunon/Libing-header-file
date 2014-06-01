@@ -1,104 +1,102 @@
+//
+//  CustomWebView.h
+//  Libing
+//
+//  Created by tarunon on 12/03/18.
+//  Copyright (c) 2012年 Nobuo Saito. All rights reserved.
+//
+
+
+#import "CustomURLProtocol.h"
+#import "CustomURLCache.h"
+#import "PreviewInWebView.h"
 #import <Foundation/Foundation.h>
+#import <QuartzCore/QuartzCore.h>
+
+typedef enum {
+    CustomWebViewLoadTypeBackForward = 1 << 0,
+    CustomWebViewLoadTypeLinkClick = 1 << 1
+} CustomWebViewLoadType;
 
 @protocol CustomWebViewDelegate;
-@interface CustomWebView : UIWebView
 
-@property (assign, nonatomic) id<CustomWebViewDelegate> delegate;
-// デリゲート(BrowserViewController)
+@interface CustomWebView : UIWebView<UIWebViewDelegate, UIActionSheetDelegate>{
+    __weak id<CustomWebViewDelegate> _delegate;
+    BOOL _failed, _skipLoad, _backForwardCalled;
+    NSError *_transferError;
+    UIPanGestureRecognizer *_backPanGestureRecognizer, *_forwardPanGestureRecognizer;
+    UIEdgeInsets contentInsetTemp;
+    CustomWebViewLoadType _iframeLoadType;
+}
 
-@property (nonatomic) NSString *textEncode, *userAgent;
-// エンコードとユーザーエージェントの設定。
-// エンコードもユーザーエージェントも、実際の値を直接指定する。
-
+@property (nonatomic) NSString *textEncode, *userAgent, *evaluatingScript;
+@property (readonly, nonatomic) NSString *windowName;
 @property (nonatomic) NSMutableArray *rotatingSheetButtons;
-// 長押しした時のボタンに表示する文字列。ブックマークレットのタイトル打ち込みゃ動く。
-
-@property (nonatomic) NSArray *selectMenuItems;
-// Select Menuに追加するボタンのタイトル。上に同じ。
-
-@property (nonatomic) NSMutableArray *backURLs, *forwardURLs;
-// タブ履歴。backURLsの先頭が現在のページ。だいたいあってる。
-
+@property (nonatomic) NSArray *backURLs, *forwardURLs, *selectMenuItems;
+@property (nonatomic) NSMutableDictionary *dataDictionary;
 @property (nonatomic) NSDictionary *historyInfo;
-// タブ履歴のより詳細な情報。スクロール位置等が含まれる？
-
-@property (nonatomic) NSString *location;
-// デコード済みURL。アドレスバーに表示される。
-// UIWebViewのrequestか、JSのlocation.hrefを参照する。
-
+@property (nonatomic) NSMutableURLRequest *loadingRequest;
 @property (nonatomic) PreviewInWebView *preview;
-// Preview関連クラス。
+@property (assign, nonatomic) id<UIActionSheetDelegate> rotatingSheetDelegate;
+@property (weak, nonatomic) CustomWebView *parentWebView;
+@property (nonatomic) CustomURLProtocol *transferProtocol;
+@property (nonatomic) NSURLConnection *transferConnection;
+@property (readonly, nonatomic) NSURLResponse *response;
+@property (readonly, nonatomic) NSString *location;
+@property (nonatomic) BOOL startLoading, backForwardRequested, stopedLoading, transferedLoading, nextRequestNewWindow, isPreviewTransfer, safeMode;
+@property (readonly, nonatomic) BOOL isFocusing;
+@property (nonatomic) float progressEstimate;
 
-- (void)addRotatingSheetButtonWithTitle:(NSString *)title;
-// rotatingSheetButtonsに指定したタイトルを追加する。
-// ぶっちゃけ直に置き換えてもいい。
-
-- (void)transferLoading;
-// 読み込みを転送する。Libingではダウンロードに。読込中でなければ動かない。
-
+- (id<CustomWebViewDelegate>)delegate;
++ (void)deleteCacheFiles;
++ (BOOL)isPrivateBrowsingEnabled;
++ (void)setPrivateBrowsingEnabled:(BOOL)privateBrowse;
++ (NSArray *)activeWebViews;
+- (void)setDelegate:(id<CustomWebViewDelegate>)delegate;
 - (void)restore;
-// backURLsとforwardURLsにURLを入れた後、このメソッドでタブを再生する。
-// ただしタブが新品で無い場合の動作は保証しない。
-
-// 他はUIWebViewに殆ど同じ。SmoothScroll然りプライベートメソッドもゴニョれるので、これだけでも結構遊べたり。
-
-- (void)close
-// タブを閉じる。
+- (void)close;
+- (void)transferLoading;
+- (void)requiredCredentialWithAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
+- (id<NSURLConnectionDelegate, NSURLConnectionDataDelegate>)setTransferConnectionDelegate:(NSURLConnection *)connection withProtocol:(CustomURLProtocol *)protocol;
+- (NSURLResponse *)translateResponse:(NSURLResponse *)response withProtocol:(CustomURLProtocol *)protocol;
+- (void)didChangeSelection;
+- (BOOL)isPDF;
 
 @end
 
-//デリゲートメソッド。使うかなぁ？
 @protocol CustomWebViewDelegate <NSObject>
 @optional
 
 - (BOOL)customWebView:(CustomWebView *)customWebView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType;
-- (void)customWebViewDidStartLoad:(CustomWebView *)customWebView;
-- (void)customWebViewDidFinishLoad:(CustomWebView *)customWebView;
-- (void)customWebView:(CustomWebView *)customWebView didFailLoadWithError:(NSError *)error;
-// UIWebViewDelegateのラッパー。呼び出すタイミングとか、navigationTypeとかをちょっと弄ったり。
 - (BOOL)customWebView:(CustomWebView *)customWebView shouldStartRenderingConnectionClosed:(BOOL)closed;
-// レンダリングを開始するかどうか。Connectionが閉じられていれば、closed=YES
-
-- (CustomWebView *)customWebView:(CustomWebView *)customWebView createWindowWithRequest:(NSURLRequest *)request;
-// 新しいタブを開く。だいぶ上手く動くようになった(｀・ω・´)
-
+- (CustomWebView *)customWebView:(CustomWebView *)customWebView createWindowWithRequest:(NSURLRequest *)request withWindowName:(NSString *)windowName;
 - (void)customWebViewClose:(CustomWebView *)customWebView;
-// タブを閉じる。
-
-- (void)customWebView:(CustomWebView *)customWebView didIframeTransitionWithLoadType:(CustomWebViewLoadType)loadType;
-// IFRAME関連の読み込み完了時。戻る進む、リンククリック。
-
-- (void)customWebView:(CustomWebView *)customWebView didAjaxTransitionWithAjaxType:(CustomWebViewAjaxType)ajaxType;
-// Ajax関連の通信完了とかの通知。戻る進む、リンククリック。
-
+- (void)customWebViewDidStartLoad:(CustomWebView *)customWebView;
+- (void)customWebViewOnReady:(CustomWebView *)customWebView;
+- (void)customWebViewDidStartRendering:(CustomWebView *)customWebView;
 - (void)customWebView:(CustomWebView *)customWebView progressEstimateChanged:(float)progress;
-// プログレスサークルで使う。
-
+- (void)customWebViewDidFinishLoad:(CustomWebView *)customWebView;
+- (void)customWebView:(CustomWebView *)customWebView didIframeTransitionWithLoadType:(CustomWebViewLoadType)loadType;
+- (void)customWebView:(CustomWebView *)customWebView didAjaxTransitionWithLoadType:(CustomWebViewLoadType)loadType;
+- (void)customWebView:(CustomWebView *)customWebView didFailLoadWithError:(NSError *)error;
 - (id<NSURLConnectionDelegate, NSURLConnectionDataDelegate>)customWebView:(CustomWebView *)customWebView requiredNewConnectionDelegate:(NSURLConnection *)connection;
-// 通信の転送要請が来た場合に新しいNSURLConnectionDelegateを返す。ダウンロードクラスを作って返してる。
-
 - (NSURLCredential *)customWebView:(CustomWebView *)customWebView requiredCredentialWithAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
-// ベーシック認証
-
 - (NSString *)customWebView:(CustomWebView *)customWebView shouldShowPrompt:(NSString *)prompt defaultText:(NSString *)text;
-// prompt()の乗っ取り。
-
-- (NSHTTPURLResponse *)customWebView:(CustomWebView *)customWebView shouldReceiveResponse:(NSHTTPURLResponse *)response;
+- (NSURLResponse *)customWebView:(CustomWebView *)customWebView shouldReceiveResponse:(NSURLResponse *)response;
 - (NSMutableURLRequest *)customWebView:(CustomWebView *)customWebView shouldSendRequest:(NSMutableURLRequest *)request;
-// リクエスト、レスポンス換装用。UAとか文字コードとかは内部的にやってるので、こっちは広告ブロックとかメディアダウンロードとかに使う。
+- (void)customWebView:(CustomWebView *)customWebView didShowKeyBoard:(UIView *)inputView withAccessoryView:(UIView *)accessoryView;
 
+//RotatingSheet
 - (BOOL)customWebView:(CustomWebView *)customWebView shouldShowRotatingSheet:(UIActionSheet *)rotatingSheet;
 - (void)customWebView:(CustomWebView *)customWebView rotatingSheet:(UIActionSheet *)rotatingSheet clickedButtonAtIndex:(NSInteger)buttonIndex;
 - (void)customWebView:(CustomWebView *)customWebView rotatingSheetCancel:(UIActionSheet *)actionSheet;
-// 長押しボタンのアレコレ
 
-- (void)customWebView:(CustomWebView *)customWebView didShowKeyBoard:(UIView *)inputView withAccessoryView:(UIView *)accessoryView;
-// 表示されたキーボードについて。
-
+//SelectMenu
 - (BOOL)customWebView:(CustomWebView *)customWebView canPerformSelectMenuAction:(SEL)action withSender:(id)sender;
 - (void)customWebView:(CustomWebView *)customWebView performSelectMenuTitle:(NSString *)title;
-// Select Menu周り。
 
-// 晒しといてなんだけど、デリゲートは絶対使わない、使えない。
+//Preview
+- (NSArray *)customWebView:(CustomWebView *)customWebView previewControllerAppendActivity:(FSPreviewController *)preview;
 
 @end
+

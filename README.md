@@ -15,20 +15,21 @@ javascript:alert(Libing.UIWebView('[self delegate]'));
 逆に、この結果を変数に格納することで以下のような事も可能になります。
 
 例)
-javascript:var d=Libing.UIWebView('[self delegate]');alert(Libing.UIWebView('[d tabArray]');
+javascript:var d=Libing.UIWebView('[self delegate]');alert(Libing.UIWebView('[d delegate]');
 
-tabArrayはその名の通りタブ列で、現在開かれているタブのインスタンスが含まれています。
 Hide adsアドオンがあれば、self以外の関数も呼ぶことが可能になります。
-また、この結果から解る通りNSArrayとArray()の相互変換も可能となっています。
+また、NSArrayとArray()やNSDictionaryとObject()の相互変換も可能となっています。
 或いは、以下のように命令しても、同じ結果を得ることができます。
 
 例)
-javascript:alert(Libing.UIWebView('[[self delegate] tabArray]'));
+javascript:alert(Libing.UIWebView('[[self delegate] delegate]'));
 
 Objective-Cのドット構文は、JavaScriptの構造体探索と区別がつかないため、利用できない仕様としています。
-また、引数毎に複数命令を一度に実行することも可能です。
+また、引数毎に複数の命令を与え、一度に実行することも可能です。
 この場合、全ての返り値はArrayに格納されます。
 
 現在公開しているヘッダー意外にも、ほしい情報があればメールなどしていただければ対応致します。
 
-Copyright (c) 2012 Nobuo Saito. All rights reserved.
+headerのコメントは後日対応予定。
+
+Copyright (c) 2014 Nobuo Saito. All rights reserved.
